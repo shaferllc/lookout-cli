@@ -7,6 +7,7 @@ namespace Lookout\Cli\Command;
 use Lookout\Cli\AuthorizedCommand;
 use Lookout\Cli\ConfigStore;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +23,7 @@ final class ListProjectsCommand extends AuthorizedCommand
     protected function configure(): void
     {
         $this->configureLookoutOptions();
-        $this->addOption('organization-id', null, InputOption::VALUE_REQUIRED, 'Filter by organization ID');
+        $this->addOption('organization-id', null, InputOption::VALUE_REQUIRED, 'Filter by organization ULID');
         $this->addPaginationOptions();
     }
 
@@ -31,7 +32,13 @@ final class ListProjectsCommand extends AuthorizedCommand
         $query = [];
         $org = $input->getOption('organization-id');
         if ($org !== null && $org !== '') {
-            $query['organization_id'] = (int) $org;
+            $org = trim((string) $org);
+            if (! self::isValidUlid($org)) {
+                $output->writeln('<error>--organization-id must be a valid ULID.</error>');
+
+                return Command::FAILURE;
+            }
+            $query['organization_id'] = $org;
         }
         $query = $this->mergePagination($input, $query);
 

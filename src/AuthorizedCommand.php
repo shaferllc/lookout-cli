@@ -118,4 +118,29 @@ abstract class AuthorizedCommand extends Command
 
         return $query;
     }
+
+    protected static function isValidUlid(string $value): bool
+    {
+        return strlen($value) === 26 && preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/i', $value) === 1;
+    }
+
+    /**
+     * @return non-empty-string|null
+     */
+    protected function requireUlidOption(InputInterface $input, OutputInterface $output, string $optionName, string $label): ?string
+    {
+        $raw = trim((string) $input->getOption($optionName));
+        if ($raw === '') {
+            $output->writeln('<error>'.$label.' is required.</error>');
+
+            return null;
+        }
+        if (! static::isValidUlid($raw)) {
+            $output->writeln('<error>'.$label.' must be a valid ULID (26 characters).</error>');
+
+            return null;
+        }
+
+        return $raw;
+    }
 }

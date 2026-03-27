@@ -7,6 +7,7 @@ namespace Lookout\Cli\Command;
 use Lookout\Cli\AuthorizedCommand;
 use Lookout\Cli\ConfigStore;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,7 +24,7 @@ final class ListProjectErrorsCommand extends AuthorizedCommand
     {
         $this->configureLookoutOptions();
         $this->addPaginationOptions();
-        $this->addOption('project-id', null, InputOption::VALUE_REQUIRED, 'Project ID');
+        $this->addOption('project-id', null, InputOption::VALUE_REQUIRED, 'Project ULID');
         $this->addOption('status', null, InputOption::VALUE_REQUIRED, 'open|resolved|ignored|all');
         $this->addOption('time', null, InputOption::VALUE_REQUIRED, '24h|7d|30d');
         $this->addOption('level', null, InputOption::VALUE_REQUIRED, 'Log level filter');
@@ -36,7 +37,10 @@ final class ListProjectErrorsCommand extends AuthorizedCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $pid = (int) $input->getOption('project-id');
+        $pid = $this->requireUlidOption($input, $output, 'project-id', '--project-id');
+        if ($pid === null) {
+            return Command::FAILURE;
+        }
         $query = [];
         $status = (string) ($input->getOption('filter-status') ?: $input->getOption('status') ?: '');
         if ($status !== '') {

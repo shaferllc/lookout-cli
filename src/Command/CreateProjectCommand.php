@@ -23,7 +23,7 @@ final class CreateProjectCommand extends AuthorizedCommand
     protected function configure(): void
     {
         $this->configureLookoutOptions();
-        $this->addOption('organization-id', null, InputOption::VALUE_REQUIRED, 'Organization ID');
+        $this->addOption('organization-id', null, InputOption::VALUE_REQUIRED, 'Organization ULID');
         $this->addOption('name', null, InputOption::VALUE_REQUIRED, 'Project name');
         $this->addOption('team-ids', null, InputOption::VALUE_REQUIRED, 'Comma-separated team IDs (optional)');
         $this->addOption('tech-stacks', null, InputOption::VALUE_REQUIRED, 'Comma-separated tech stack slugs (optional, e.g. php,laravel,node)');
@@ -32,9 +32,9 @@ final class CreateProjectCommand extends AuthorizedCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orgId = (int) $input->getOption('organization-id');
-        if ($orgId < 1) {
-            $output->writeln('<error>--organization-id must be a positive integer.</error>');
+        $orgId = trim((string) $input->getOption('organization-id'));
+        if ($orgId === '' || ! self::isValidUlid($orgId)) {
+            $output->writeln('<error>--organization-id must be a valid ULID.</error>');
 
             return Command::FAILURE;
         }
@@ -50,7 +50,15 @@ final class CreateProjectCommand extends AuthorizedCommand
         ];
         $teams = (string) ($input->getOption('team-ids') ?? '');
         if ($teams !== '') {
-            $body['team_ids'] = array_map('intval', array_filter(array_map('trim', explode(',', $teams))));
+            $teamIdList = array_values(array_filter(array_map('trim', explode(',', $teams)), fn (string $tid) => $tid !== ''));
+            foreach ($teamIdList as $tid) {
+                if (! self::isValidUlid($tid)) {
+                    $output->writeln('<error>Each team ID in --team-ids must be a valid ULID.</error>');
+
+                    return Command::FAILURE;
+                }
+            }
+            $body['team_ids'] = $teamIdList;
         }
         $tech = trim((string) ($input->getOption('tech-stacks') ?? ''));
         if ($tech !== '') {

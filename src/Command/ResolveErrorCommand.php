@@ -7,6 +7,7 @@ namespace Lookout\Cli\Command;
 use Lookout\Cli\AuthorizedCommand;
 use Lookout\Cli\ConfigStore;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,13 +23,16 @@ final class ResolveErrorCommand extends AuthorizedCommand
     protected function configure(): void
     {
         $this->configureLookoutOptions();
-        $this->addOption('error-id', null, InputOption::VALUE_REQUIRED, 'Representative error / event ID');
+        $this->addOption('error-id', null, InputOption::VALUE_REQUIRED, 'Representative error / occurrence ULID');
         $this->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Optional resolve comment');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $eid = (int) $input->getOption('error-id');
+        $eid = $this->requireUlidOption($input, $output, 'error-id', '--error-id');
+        if ($eid === null) {
+            return Command::FAILURE;
+        }
         $body = [];
         $c = (string) ($input->getOption('comment') ?? '');
         if ($c !== '') {

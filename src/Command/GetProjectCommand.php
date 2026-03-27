@@ -7,6 +7,7 @@ namespace Lookout\Cli\Command;
 use Lookout\Cli\AuthorizedCommand;
 use Lookout\Cli\ConfigStore;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,12 +23,15 @@ final class GetProjectCommand extends AuthorizedCommand
     protected function configure(): void
     {
         $this->configureLookoutOptions();
-        $this->addOption('project-id', null, InputOption::VALUE_REQUIRED, 'Project ID');
+        $this->addOption('project-id', null, InputOption::VALUE_REQUIRED, 'Project ULID');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $id = (int) $input->getOption('project-id');
+        $id = $this->requireUlidOption($input, $output, 'project-id', '--project-id');
+        if ($id === null) {
+            return Command::FAILURE;
+        }
         $data = $this->client($input)->get('api/v1/projects/'.$id);
 
         return $this->writeFormatted($input, $output, $data, function () use ($output, $data): void {

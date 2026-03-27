@@ -7,6 +7,7 @@ namespace Lookout\Cli\Command;
 use Lookout\Cli\AuthorizedCommand;
 use Lookout\Cli\ConfigStore;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,12 +23,15 @@ final class GetErrorOccurrenceCommand extends AuthorizedCommand
     protected function configure(): void
     {
         $this->configureLookoutOptions();
-        $this->addOption('occurrence-id', null, InputOption::VALUE_REQUIRED, 'Error event / occurrence ID');
+        $this->addOption('occurrence-id', null, InputOption::VALUE_REQUIRED, 'Error event / occurrence ULID');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $id = (int) $input->getOption('occurrence-id');
+        $id = $this->requireUlidOption($input, $output, 'occurrence-id', '--occurrence-id');
+        if ($id === null) {
+            return Command::FAILURE;
+        }
         $data = $this->client($input)->get('api/v1/error-occurrences/'.$id);
 
         return $this->writeFormatted($input, $output, $data);
