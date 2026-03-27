@@ -26,6 +26,8 @@ final class CreateProjectCommand extends AuthorizedCommand
         $this->addOption('organization-id', null, InputOption::VALUE_REQUIRED, 'Organization ID');
         $this->addOption('name', null, InputOption::VALUE_REQUIRED, 'Project name');
         $this->addOption('team-ids', null, InputOption::VALUE_REQUIRED, 'Comma-separated team IDs (optional)');
+        $this->addOption('tech-stacks', null, InputOption::VALUE_REQUIRED, 'Comma-separated tech stack slugs (optional, e.g. php,laravel,node)');
+        $this->addOption('environments', null, InputOption::VALUE_REQUIRED, 'Comma-separated environment labels (optional; default presets if omitted)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -49,6 +51,14 @@ final class CreateProjectCommand extends AuthorizedCommand
         $teams = (string) ($input->getOption('team-ids') ?? '');
         if ($teams !== '') {
             $body['team_ids'] = array_map('intval', array_filter(array_map('trim', explode(',', $teams))));
+        }
+        $tech = trim((string) ($input->getOption('tech-stacks') ?? ''));
+        if ($tech !== '') {
+            $body['tech_stacks'] = array_values(array_filter(array_map('trim', explode(',', $tech))));
+        }
+        $envs = trim((string) ($input->getOption('environments') ?? ''));
+        if ($envs !== '') {
+            $body['environment_labels'] = array_values(array_filter(array_map('trim', explode(',', $envs))));
         }
 
         $data = $this->client($input)->post('api/v1/projects', [], $body);
