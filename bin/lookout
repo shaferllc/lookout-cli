@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Lookout\Cli\LookoutApplication;
+
+$autoloadPaths = [
+    dirname(__DIR__).'/vendor/autoload.php',
+    dirname(__DIR__, 3).'/autoload.php',
+];
+
+foreach ($autoloadPaths as $path) {
+    if (is_file($path)) {
+        require $path;
+        break;
+    }
+}
+
+if (! class_exists(LookoutApplication::class)) {
+    fwrite(STDERR, "Lookout CLI: could not find Composer autoload.\n");
+    fwrite(STDERR, "  If developing in the monorepo: run `composer install` at the project root.\n");
+    fwrite(STDERR, "  If using the package alone: run `composer install` in packages/lookout-cli.\n");
+    exit(1);
+}
+
+exit(LookoutApplication::withDefaultConfig()->run());

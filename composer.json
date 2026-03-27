@@ -1,0 +1,33 @@
+{
+    "name": "lookout/cli",
+    "description": "Lookout CLI: manage projects and errors from the terminal, backed by the Lookout REST API.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "guzzlehttp/guzzle": "^7.8",
+        "symfony/console": "^7.0",
+        "symfony/yaml": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.5"
+    },
+    "bin": [
+        "bin/lookout"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Lookout\\Cli\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lookout\\Cli\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
