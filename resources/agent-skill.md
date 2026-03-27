@@ -17,6 +17,8 @@ Teaches coding agents how to use the **Lookout CLI** against the **Lookout accou
 
 If the user is not logged in, run `lookout login` (interactive) or ask them for base URL + token and pass `--base-url` and `--token` on each command.
 
+**Exception:** `lookout ship-logs` uses the **project ingest API key** (`LOOKOUT_PROJECT_API_KEY` or `LOOKOUT_INGEST_API_KEY`, or `--api-key`), not the Sanctum token — it posts to `POST /api/ingest/log` for nginx/Apache-style line logs.
+
 ## When to use this skill
 
 - Triage: list open grouped errors, sort mentally by `occurrence_count` or `last_seen`, resolve or snooze in batch.
@@ -58,6 +60,7 @@ lookout list-project-errors --project-id=1 --filter-status=open --json | jq '.da
 | Resolve / reopen / ignore | `lookout resolve-error --error-id=` [`--comment=`], `open-error`, `ignore-error` |
 | Snooze | `lookout snooze-error --error-id=` [`--preset=1h\|8h\|24h\|7d` \| `--until=ISO8601`], `unsnooze-error` |
 | Delete project | Not in API — UI only (`delete-project` command explains this) |
+| Ship plain log lines | `lookout ship-logs` — project API key + `LOOKOUT_BASE_URL`; pipe `tail -F` or `-f` file |
 
 Pagination: `--page-number`, `--page-size` (API max 100).
 

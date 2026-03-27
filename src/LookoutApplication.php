@@ -21,6 +21,7 @@ use Lookout\Cli\Command\LogoutCommand;
 use Lookout\Cli\Command\MonitoringStubCommand;
 use Lookout\Cli\Command\OpenErrorCommand;
 use Lookout\Cli\Command\ResolveErrorCommand;
+use Lookout\Cli\Command\ShipLogsCommand;
 use Lookout\Cli\Command\SnoozeErrorCommand;
 use Lookout\Cli\Command\UnsnoozeErrorCommand;
 use Symfony\Component\Console\Application;
@@ -62,6 +63,7 @@ final class LookoutApplication extends Application
         $this->add(new SnoozeErrorCommand($c));
         $this->add(new UnsnoozeErrorCommand($c));
         $this->add(new InstallSkillCommand);
+        $this->add(new ShipLogsCommand);
         foreach (MonitoringStubCommand::NAMES as $name) {
             $this->add(MonitoringStubCommand::named($name));
         }
