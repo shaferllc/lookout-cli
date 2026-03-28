@@ -2,6 +2,7 @@
     "name": "lookout/cli",
     "description": "Lookout CLI: manage projects and errors from the terminal, backed by the Lookout REST API.",
     "type": "library",
+    "version": "1.0.0",
     "license": "MIT",
     "require": {
         "php": "^8.3",
@@ -27,7 +28,5 @@
     },
     "config": {
         "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
