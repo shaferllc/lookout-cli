@@ -66,6 +66,9 @@ final class LookoutClient
             $msg = is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])
                 ? $decoded['message']
                 : ($body !== '' ? $body : $e->getMessage());
+            if (is_array($decoded) && isset($decoded['billing_url']) && is_string($decoded['billing_url']) && $decoded['billing_url'] !== '') {
+                $msg .= ' Billing: '.$decoded['billing_url'];
+            }
             $status = $e->hasResponse() ? $e->getResponse()->getStatusCode() : 0;
             throw new \RuntimeException('API error: '.$msg, $status, $e);
         } catch (GuzzleException $e) {
