@@ -1,6 +1,8 @@
 # Lookout CLI
 
-Terminal client for [Lookout](https://github.com/) error tracking. It calls the Lookout **`/api/v1/*`** REST API with a Sanctum personal access token.
+Terminal client for [Lookout](https://uselookout.app) error tracking. It calls the Lookout **`/api/v1/*`** REST API with a Sanctum personal access token.
+
+**Free dashboard:** [Create a free Starter account](https://uselookout.app/register) (no credit card) if you need a project and API token first — then run `lookout login` with a **Personal API token** from Profile.
 
 ## Install
 
