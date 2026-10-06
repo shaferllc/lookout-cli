@@ -6,14 +6,14 @@ Terminal client for [Lookout](https://uselookout.app) error tracking. It calls t
 
 ## Install
 
-From this monorepo (path repository):
+From this monorepo or any Laravel app:
 
 ```bash
 composer require --dev lookout/cli
 ./vendor/bin/lookout list
 ```
 
-Or global (after publishing or using a path repo in your global `composer.json`):
+Or global:
 
 ```bash
 composer global require lookout/cli

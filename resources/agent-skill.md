@@ -10,7 +10,7 @@ Teaches coding agents how to use the **Lookout CLI** against the **Lookout accou
 ## Prerequisites
 
 1. **CLI available**
-   - In the Lookout monorepo: `./vendor/bin/lookout` (dev dependency `lookout/cli`).
+   - In the Lookout monorepo: `./vendor/bin/lookout` (dev dependency `lookout/cli` from Packagist).
    - Elsewhere: install `lookout/cli` via a Composer path/VCS repository, or `composer global require lookout/cli` when published.
 2. **Auth**: `lookout login` — base URL (no trailing slash), e.g. `https://errors.example.com`, and a **Sanctum personal access token** from the Lookout app. Credentials live in `~/.lookout/config.json`.
 3. **Overrides**: `LOOKOUT_BASE_URL`, `LOOKOUT_API_TOKEN`, or per-command `--base-url` / `--token`.
